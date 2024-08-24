@@ -35,7 +35,13 @@ public class Main {
                 res += data[2];
                 client.getOutputStream().write(res.getBytes());
             }
-            client.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
+            else if(httpData[1].equals("/")){
+                client.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+            }
+            else{
+                client.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
+            }
+
 
             System.out.println("accepted new connection");
 
