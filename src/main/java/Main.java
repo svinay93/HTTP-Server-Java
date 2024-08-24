@@ -23,7 +23,7 @@ public class Main {
             String str = new String(in, StandardCharsets.UTF_8);
             String data = str.split("\r\n")[0].split(" ")[1];
             System.out.println(data);
-            if (data.equals("/")) {
+            if (data.equals("/") && data.length()==1) {
                 client.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
             } else {
                 client.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
