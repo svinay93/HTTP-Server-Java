@@ -26,14 +26,16 @@ public class Main {
             String line = reader.readLine();
             System.out.println(line);
             String[] httpData = line.split(" ", 0);
-            String[] data = httpData[1].split("/");
-            System.out.println(data[2]);
-            String res = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
-            res+=data[2].length();
-            res+="\r\n\r\n";
-            res+=data[2];
-            client.getOutputStream().write(res.getBytes());
-
+            if(httpData[1].contains("echo")) {
+                String[] data = httpData[1].split("/");
+                System.out.println(data[2]);
+                String res = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
+                res += data[2].length();
+                res += "\r\n\r\n";
+                res += data[2];
+                client.getOutputStream().write(res.getBytes());
+            }
+            client.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
 
             System.out.println("accepted new connection");
 
