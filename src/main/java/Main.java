@@ -26,11 +26,11 @@ public class Main {
             String line = reader.readLine();
             System.out.println(line);
             String[] data = line.split(" ", 0);
-            OutputStream out = client.getOutputStream();
+            
             if (data[1].equals("/")) {
-                out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+                client.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
             } else {
-                out.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
+                client.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
             }
 
             System.out.println("accepted new connection");
