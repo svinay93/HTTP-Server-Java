@@ -21,12 +21,13 @@ public class Main {
 
 
             Socket client = serverSocket.accept(); // Wait for connection from client.
-            byte[] in = client.getInputStream().readNBytes(70);
-            String str = new String(in, StandardCharsets.UTF_8);
-            String data = str.split("\r\n")[0].split(" ")[1];
-            System.out.println(data);
+            InputStream input = client.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            String line = reader.readLine();
+            System.out.println(line);
+            String[] data = line.split(" ", 0);
             OutputStream out = client.getOutputStream();
-            if (data.equals("/") && data.length() == 1) {
+            if (data[1].equals("/")) {
                 out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
             } else {
                 out.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
