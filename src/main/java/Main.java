@@ -18,31 +18,19 @@ public class Main {
             // ensures that we don't run into 'Address already in use' errors
             serverSocket.setReuseAddress(true);
 
+
+
             Socket client = serverSocket.accept(); // Wait for connection from client.
-
-            InputStream input = client.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            String line = reader.readLine();
-            System.out.println(line);
-            String[] HttpRequest = line.split(" ", 0);
-            OutputStream output = client.getOutputStream();
-            output.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
-            if (HttpRequest[1].equals("/")) {
-                output.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+            byte[] in = client.getInputStream().readNBytes(70);
+            String str = new String(in, StandardCharsets.UTF_8);
+            String data = str.split("\r\n")[0].split(" ")[1];
+            System.out.println(data);
+            OutputStream out = client.getOutputStream();
+            if (data.equals("/") && data.length() == 1) {
+                out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
             } else {
-                output.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
+                out.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
             }
-
-
-//            byte[] in = client.getInputStream().readNBytes(70);
-//            String str = new String(in, StandardCharsets.UTF_8);
-//            String data = str.split("\r\n")[0].split(" ")[1];
-//            System.out.println(data);
-//            if (data.equals("/") && data.length() == 1) {
-//                client.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
-//            } else {
-//                client.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
-//            }
 
             System.out.println("accepted new connection");
 
