@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,13 +25,15 @@ public class Main {
             Socket client = serverSocket.accept(); // Wait for connection from client.
             InputStream input = client.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
             String line = reader.readLine();
-            System.out.println(line);
+
             String[] httpData = line.split(" ", 0);
+            String res = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
             if(httpData[1].contains("echo")) {
                 String[] data = httpData[1].split("/");
                 System.out.println(data[2]);
-                String res = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
+
                 res += data[2].length();
                 res += "\r\n\r\n";
                 res += data[2];
@@ -37,6 +41,15 @@ public class Main {
             }
             else if(httpData[1].equals("/")){
                 client.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+            }
+            else if(httpData[1].equals("/user-agent")){
+                reader.readLine();
+                String[] data = reader.readLine().split(" ");
+                res += data[1].length();
+                res += "\r\n\r\n";
+                res += data[1];
+
+                client.getOutputStream().write(res.getBytes());
             }
             else{
                 client.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
