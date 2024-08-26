@@ -9,10 +9,14 @@ public class Main {
     public static void main(String[] args) {
         // You can use print statements as follows for debugging, they'll be visible when running tests.
         System.out.println("Logs from your program will appear here!");
+        String path ="";
+        if(args.length>0){
+            path = args[1];
+        }
 
         try {
 
-            HttpServer server = new HttpServer(4221,args[1]);
+            HttpServer server = new HttpServer(4221,path);
             server.run();
 
 
