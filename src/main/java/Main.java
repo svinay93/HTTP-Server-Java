@@ -12,8 +12,9 @@ public class Main {
 
         try {
 
-            HttpServer server = new HttpServer(4221);
+            HttpServer server = new HttpServer(4221,args[1]);
             server.run();
+
 
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
