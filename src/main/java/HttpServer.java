@@ -49,29 +49,29 @@ public class HttpServer {
         InputStream input = client.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         String line = reader.readLine();
-        String[] httpData = line.split(" ", 0);
+        String requestPath = line.split(" ", 0)[1];
         String res =
                 "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
-        
-        if (httpData[1].contains("echo")) {
-            String[] data = httpData[1].split("/");
+
+        if (requestPath.contains("echo")) {
+            String[] data = requestPath.split("/");
             System.out.println(data[2]);
             res += data[2].length();
             res += "\r\n\r\n";
             res += data[2];
             client.getOutputStream().write(res.getBytes());
-        } else if (httpData[1].equals("/")) {
+        } else if (requestPath.equals("/")) {
             client.getOutputStream().write(SIMPLE_200.getBytes());
 
-        } else if (httpData[1].equals("/user-agent")) {
+        } else if (requestPath.equals("/user-agent")) {
             reader.readLine();
             String[] data = reader.readLine().split(" ");
             res += data[1].length();
             res += "\r\n\r\n";
             res += data[1];
             client.getOutputStream().write(res.getBytes());
-        } else if (httpData[1].startsWith("/files")) {
-            String fileName = httpData[1].split("/")[2];
+        } else if (requestPath.startsWith("/files")) {
+            String fileName = requestPath.split("/")[2];
 
             File f = new File(this.directory + "/" + fileName);
             if (f.exists() && !f.isDirectory()) {
