@@ -8,12 +8,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class HttpServer {
-    private ServerSocket serverSocket;
-    private ExecutorService executorService;
-    private String directory;
-
+    private final ServerSocket serverSocket;
+    private final ExecutorService executorService;
+    private final String directory;
     public static final String SIMPLE_200 = "HTTP/1.1 200 OK\r\n\r\n";
     public static final String NOT_FOUND = "HTTP/1.1 404 Not Found\r\n\r\n";
+
+    public static final String CREATED_201 = "HTTP/1.1 201 Created\r\n\r\n";
 
 
     public HttpServer(int port, String path) throws IOException {
@@ -23,13 +24,6 @@ public class HttpServer {
         this.directory = path;
     }
 
-    public ServerSocket getServerSocket() {
-        return serverSocket;
-    }
-
-    public void setServerSocket(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
-    }
 
     public void run() throws IOException {
         while (true) {
@@ -47,57 +41,84 @@ public class HttpServer {
     public void handleRequest(Socket client) throws IOException {
         // Wait for connection from client.
         InputStream input = client.getInputStream();
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         String line = reader.readLine();
-        String requestPath = line.split(" ", 0)[1];
+        String[] request = line.split(" ", 0);
+        if (request[0].equals("GET")) {
+            handleGetRequest(reader, request[1], client);
+        }else if(request[0].equals("POST")){
+            handlePostRequest(reader, request[1], client);
+        }
+
+        client.close();
+        System.out.println("accepted new connection");
+    }
+
+    private void handlePostRequest(BufferedReader reader, String requestPath, Socket client) throws IOException {
+        System.out.println("POST");
+
+
+        if(requestPath.startsWith("/files")){
+            String fileName = requestPath.split("/")[2];
+            reader.readLine();
+            reader.readLine();
+            reader.readLine();
+            String size = reader.readLine().split(" ")[1];
+            reader.readLine();
+            reader.readLine();
+            StringBuffer bodyBuffer = new StringBuffer();
+            while (reader.ready()) {
+                bodyBuffer.append((char)reader.read());
+            }
+            String body = bodyBuffer.toString();
+            System.out.println(this.directory+ fileName);
+            System.out.println(body);
+            File file = new File(this.directory +"/"+ fileName);
+            if (file.createNewFile()) {
+                FileWriter fileWriter = new FileWriter(file);
+                fileWriter.write(body);
+                fileWriter.close();
+            }
+
+            client.getOutputStream().write(CREATED_201.getBytes());
+        }
+        else{
+            client.getOutputStream().write(NOT_FOUND.getBytes());
+        }
+
+
+    }
+
+    private void handleGetRequest(BufferedReader reader, String requestPath, Socket client) throws IOException {
         String res =
                 "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
-
-        if (requestPath.contains("echo")) {
-            String[] data = requestPath.split("/");
-            System.out.println(data[2]);
-            res += data[2].length();
-            res += "\r\n\r\n";
-            res += data[2];
-            client.getOutputStream().write(res.getBytes());
-        } else if (requestPath.equals("/")) {
+        if (requestPath.equals("/")) {
             client.getOutputStream().write(SIMPLE_200.getBytes());
-
+        } else if (requestPath.startsWith("/echo")) {
+            String data = requestPath.split("/")[2];
+            res += data.length()+"\r\n\r\n"+data;
+            client.getOutputStream().write(res.getBytes());
         } else if (requestPath.equals("/user-agent")) {
             reader.readLine();
-            String[] data = reader.readLine().split(" ");
-            res += data[1].length();
-            res += "\r\n\r\n";
-            res += data[1];
+            String data = reader.readLine().split(" ")[1];
+            res += data.length()+"\r\n\r\n"+data;
             client.getOutputStream().write(res.getBytes());
         } else if (requestPath.startsWith("/files")) {
             String fileName = requestPath.split("/")[2];
-
             File f = new File(this.directory + "/" + fileName);
             if (f.exists() && !f.isDirectory()) {
-                // do something
-                System.out.println("File exists");
+
                 String content = Files.readString(Path.of(this.directory + "/" + fileName), StandardCharsets.UTF_8);
-                System.out.println(content);
-                //HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 14\r\n\r\nHello, World!
-                String out =
-                        "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ";
-                out += content.length();
-                out += "\r\n\r\n";
-                out += content;
+                String out = "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ";
+                out += content.length()+"\r\n\r\n"+content;
                 client.getOutputStream().write(out.getBytes());
 
             } else {
-                client.getOutputStream().write(
-                        NOT_FOUND.getBytes());
+                client.getOutputStream().write(NOT_FOUND.getBytes());
             }
-
-
         } else {
-            client.getOutputStream().write(
-                    NOT_FOUND.getBytes());
+            client.getOutputStream().write(NOT_FOUND.getBytes());
         }
-        client.close();
-        System.out.println("accepted new connection");
     }
 }

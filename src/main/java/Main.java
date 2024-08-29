@@ -12,6 +12,7 @@ public class Main {
         String path ="";
         if(args.length>0){
             path = args[1];
+            System.out.println(path);
         }
 
         try {
