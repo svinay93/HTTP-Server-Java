@@ -62,6 +62,7 @@ public class HttpServer {
         if(requestPath.startsWith("/files")){
 
             String fileName = requestPath.split("/")[2];
+            System.out.println("here"+ fileName);
             reader.readLine();
             reader.readLine();
             reader.readLine();
@@ -73,7 +74,7 @@ public class HttpServer {
                 bodyBuffer.append((char)reader.read());
             }
             String body = bodyBuffer.toString();
-            System.out.println("here");
+
             System.out.println(this.directory+ fileName);
             System.out.println(body);
             File file = new File(this.directory + fileName);
