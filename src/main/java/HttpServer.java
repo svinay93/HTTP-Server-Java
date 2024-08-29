@@ -56,7 +56,7 @@ public class HttpServer {
     }
 
     private void handlePostRequest(BufferedReader reader, String requestPath, Socket client) throws IOException {
-        System.out.println("POST");
+        System.out.println("POST "+ requestPath);
 
 
         if(requestPath.startsWith("/files")){
