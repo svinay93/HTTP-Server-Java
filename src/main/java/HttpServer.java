@@ -74,7 +74,7 @@ public class HttpServer {
             String body = bodyBuffer.toString();
             System.out.println(this.directory+ fileName);
             System.out.println(body);
-            File file = new File(this.directory +"/"+ fileName);
+            File file = new File(this.directory + fileName);
             if (file.createNewFile()) {
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(body);
