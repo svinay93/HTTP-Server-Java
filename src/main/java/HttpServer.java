@@ -62,11 +62,12 @@ public class HttpServer {
         if(requestPath.startsWith("/files")){
 
             String fileName = requestPath.split("/")[2];
-            System.out.println("here"+ fileName);
+
             reader.readLine();
             reader.readLine();
             reader.readLine();
             String size = reader.readLine().split(" ")[1];
+            System.out.println("here"+ fileName);
             reader.readLine();
             reader.readLine();
             StringBuffer bodyBuffer = new StringBuffer();
