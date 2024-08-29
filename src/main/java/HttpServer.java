@@ -4,6 +4,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -63,13 +65,18 @@ public class HttpServer {
 
             String fileName = requestPath.split("/")[2];
 
-            reader.readLine();
-            reader.readLine();
-            reader.readLine();
-            String size = reader.readLine().split(" ")[1];
+            Map<String, String> requestHeaders = new HashMap<String, String>();
+            String header = null;
+            while ((header = reader.readLine()) != null &&
+                    !header.isEmpty()) {
+                String[] keyVal = header.split(":", 2);
+                if (keyVal.length == 2) {
+                    requestHeaders.put(keyVal[0], keyVal[1].trim());
+                }
+            }
+
             System.out.println("here"+ fileName);
-            reader.readLine();
-            reader.readLine();
+
             StringBuffer bodyBuffer = new StringBuffer();
             while (reader.ready()) {
                 bodyBuffer.append((char)reader.read());
