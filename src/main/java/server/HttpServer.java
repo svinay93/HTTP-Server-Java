@@ -104,7 +104,7 @@ public class HttpServer {
         }
         else if (requestPath.startsWith("/echo")) {
             String data = requestPath.split("/")[2];
-            if(requestHeaders.containsKey("Accept-Encoding") && requestHeaders.get("Accept-Encoding").equals("gzip")){
+            if(requestHeaders.containsKey("Accept-Encoding") && requestHeaders.get("Accept-Encoding").contains("gzip")){
                 client.getOutputStream().write(GZIP_BASE.getBytes());
             }
             else {
