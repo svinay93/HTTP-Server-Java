@@ -109,15 +109,9 @@ public class HttpServer {
             if(requestHeaders.containsKey("Accept-Encoding") && requestHeaders.get("Accept-Encoding").contains("gzip")){
                 byte[] compressedData = compress(data);
                 byte[] base = (GZIP_BASE + compressedData.length + "\r\n\r\n").getBytes();
-                byte[] allByteArray = new byte[base.length + compressedData.length ];
-                ByteBuffer buff = ByteBuffer.wrap(allByteArray);
-                buff.put(base);
-                buff.put(compressedData);
-                byte[] combined = buff.array();
                 client.getOutputStream().write(base);
                 client.getOutputStream().write(compressedData);
                 
-
             }
             else {
                 sendResponse(PLAIN_TEXT_200, data, client);
