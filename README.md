@@ -1,39 +1,34 @@
-[![progress-banner](https://backend.codecrafters.io/progress/http-server/fcb2beba-feae-4d4e-a414-c748246429a6)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+Built a basic HTTP Server supporting GET and POST methods
 
-This is a starting point for Java solutions to the
-["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview).
+Has support for GZIP compression
 
-[HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) is the
-protocol that powers the web. In this challenge, you'll build a HTTP/1.1 server
-that is capable of serving multiple clients.
 
-Along the way you'll learn about TCP servers,
-[HTTP request syntax](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html),
-and more.
+Start the server:
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+Pass the absolute path by setting the directory flag, this is where you want the files to be saved and retrieved from, this will be used when '/files' endpoint is hit, as mentioned below.
 
-# Passing the first stage
+--directory /{mydir}
 
-The entry point for your HTTP server implementation is in
-`src/main/java/Main.java`. Study and uncomment the relevant code, and push your
-changes to pass the first stage:
+Endpoints:
 
-```sh
-git add .
-git commit -m "pass 1st stage" # any msg
-git push origin master
-```
+GET:
 
-Time to move on to the next stage!
+/ - Returns 200
 
-# Stage 2 & beyond
+/echo/{str} - Returns {str} embedded in the body
 
-Note: This section is for stages 2 and beyond.
+/user-agent - Returns the user agent present in the request made
 
-1. Ensure you have `java (21)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main/java/Main.java`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+/files/{name} - Returns the content of the file name present in the path {name}
+
+/* - Any other GET requests except for the ones mentioned above returns 404
+
+
+POST:
+
+/files/{name} : Creates a file named {name} and Returns 201
+
+
+Encoding:
+
+Only supports gzip, add gzip as the accepted encoding scheme in the header and the data will be returned in gzip compressed form
