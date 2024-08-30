@@ -111,7 +111,7 @@ public class HttpServer {
                 byte[] base = (GZIP_BASE + compressedData.length + "\r\n\r\n").getBytes();
                 client.getOutputStream().write(base);
                 client.getOutputStream().write(compressedData);
-                
+
             }
             else {
                 sendResponse(PLAIN_TEXT_200, data, client);
